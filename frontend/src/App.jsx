@@ -94,9 +94,25 @@ function App() {
     formData.append('ranges', rangeStr);
 
     // Environment-aware API URL
-    const API_URL = import.meta.env.PROD
-      ? '/api/split'
-      : 'http://localhost:8000/api/split';
+    // 1. VITE_BACKEND_URL from .env or Vercel Settings (Best for Render/External Backend)
+    // 2. /api/split for Vercel Serverless
+    // 3. Localhost fallback
+    let baseURL = import.meta.env.VITE_BACKEND_URL;
+
+    if (!baseURL) {
+      // If PROD, try relative /api/split (Vercel Backend)
+      // If DEV, try localhost
+      baseURL = import.meta.env.PROD ? '/api/split' : 'http://localhost:8000/split';
+    } else {
+      // Ensure standard format
+      if (!baseURL.endsWith('/split')) {
+        // Remove trailing slash if exists then add /split
+        baseURL = baseURL.replace(/\/$/, '') + '/split';
+      }
+    }
+
+    const API_URL = baseURL;
+    console.log("Using API:", API_URL);
 
     try {
       const response = await axios.post(API_URL, formData, {
