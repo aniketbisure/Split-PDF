@@ -13,13 +13,13 @@ import pypdf
 
 app = FastAPI()
 
-# Enable CORS
+# Enable CORS with broad permissions for cross-platform hosting
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], # Allow ALL origins (Vercel, Localhost, etc)
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"], # Allow ALL methods (POST, GET, OPTIONS, etc)
+    allow_headers=["*"], # Allow ALL headers
 )
 
 # Use system temp directory for Vercel compatibility
