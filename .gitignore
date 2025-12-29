@@ -1,0 +1,9 @@
+node_modules
+__pycache__
+venv
+env
+uploads/
+outputs/
+.DS_Store
+dist
+.vercel
