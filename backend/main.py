@@ -161,5 +161,6 @@ async def split_pdf(
 
 @app.get("/api/health")
 @app.get("/health")
+@app.get("/")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "service": "PDF Splitter Backend"}
