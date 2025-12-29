@@ -22,7 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Use system temp directory for Vercel compatibility (Read-only FS elsewhere)
+# Use system temp directory for Vercel compatibility
 BASE_DIR = Path(tempfile.gettempdir()) / "pdf-splitter"
 UPLOAD_DIR = BASE_DIR / "uploads"
 OUTPUT_DIR = BASE_DIR / "outputs"
@@ -63,7 +63,6 @@ def parse_page_ranges(range_str: str, max_pages: int) -> List[tuple]:
     return ranges
 
 def cleanup_files(file_paths: List[Path], dirs_to_remove: List[Path] = None):
-    # Small delay for handle release
     time.sleep(1.0)
     for p in file_paths:
         for attempt in range(3):
@@ -84,7 +83,8 @@ def cleanup_files(file_paths: List[Path], dirs_to_remove: List[Path] = None):
                 except Exception:
                     time.sleep(1.0)
 
-@app.post("/api/split") # Updated route for Vercel rewrite standards
+@app.post("/split") # For Render / Local
+@app.post("/api/split") # For Vercel
 async def split_pdf(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
@@ -159,7 +159,7 @@ async def split_pdf(
         cleanup_files([session_upload_path], [session_output_dir])
         raise HTTPException(status_code=500, detail=str(e))
 
-# For Vercel, we might need a catch-all if not using standard rewrites for docs
 @app.get("/api/health")
+@app.get("/health")
 def health():
     return {"status": "ok"}
